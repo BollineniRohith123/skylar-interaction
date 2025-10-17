@@ -258,14 +258,14 @@ export default function Home() {
               <div className="flex flex-col space-y-4">
                 <div>
                   <label htmlFor="apiKey" className="block text-sm font-medium text-gray-300 mb-2">
-                    API Key
+                    Enter the Key of Skylar Bot
                   </label>
                   <input
                     type="password"
                     id="apiKey"
                     value={apiKey}
                     onChange={(e) => handleApiKeyChange(e.target.value)}
-                    placeholder="Enter your API key (e.g., AbCdEf.1234567890abcdef...)"
+                    placeholder="Enter the key for Skylar Bot (e.g., AbCdEf.1234567890abcdef...)"
                     className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>
@@ -281,7 +281,7 @@ export default function Home() {
                 )}
                 
                 {usageInfo && (
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                     <div className="bg-gray-800 p-3 rounded-md">
                       <div className="text-gray-300">Remaining Minutes</div>
                       <div className="text-2xl font-bold text-green-400">{usageInfo.freeTimeRemaining}</div>
@@ -289,15 +289,6 @@ export default function Home() {
                     <div className="bg-gray-800 p-3 rounded-md">
                       <div className="text-gray-300">Used Minutes</div>
                       <div className="text-2xl font-bold text-blue-400">{usageInfo.freeTimeUsed}</div>
-                    </div>
-                    <div className="bg-gray-800 p-3 rounded-md">
-                      <div className="text-gray-300">Subscription</div>
-                      <div className="text-lg font-bold text-purple-400">
-                        {usageInfo.hasActiveSubscription ? 
-                          (usageInfo.subscriptionTier || 'Active') : 
-                          'Free Tier'
-                        }
-                      </div>
                     </div>
                   </div>
                 )}
