@@ -73,13 +73,7 @@ export async function startCall(callbacks: CallCallbacks, callConfig: CallConfig
     // Start up our Ultravox Session
     uvSession = new UltravoxSession({ experimentalMessages: debugMessages });
     
-    // Register our tool for order details
-    uvSession.registerToolImplementation(
-      "updateOrder",
-      updateOrderTool
-    );
-
-    // Register our tool for showing images
+    // Register our tool for showing images (Skylar)
     uvSession.registerToolImplementation(
       "showImage",
       showImageTool
@@ -121,9 +115,9 @@ export async function endCall(): Promise<void> {
     uvSession = null;
   }
 
-  // Dispatch a custom event when the call ends so that we can clear the order details form
+  // Dispatch a Skylar-specific custom event when the call ends so that Skylar UI can clear state
   if (typeof window !== 'undefined') {
-    const event = new CustomEvent('callEnded');
+    const event = new CustomEvent('skylar:callEnded');
     window.dispatchEvent(event);
   }
 

@@ -84,9 +84,9 @@ function getSystemPrompt() {
 
   ## Conversation Flow
   1. Greet the user professionally. Introduce yourself as the Skylar Voice Assistant.
-  2. Answer any questions they have about Skylar's services based on your knowledge base.
-  3. If they ask to see an example, use the "showImage" tool with the appropriate assets/ path.
-  4. If you don't know an answer, politely say, "That's a great question. For specific details like that, I'd recommend contacting our expert team directly through the contact form on our website."
+ 2. Answer any questions they have about Skylar's services based on your knowledge base.
+ 3. If they ask to see an example, use the "showImage" tool with the appropriate assets/ path.
+ 4. If you don't know an answer, politely say, "That's a great question. For specific details like that, I'd recommend contacting our expert team directly through the contact form on our website."
   5. Keep your answers concise (2-3 sentences).
   `;
   return sysPrompt;
@@ -113,7 +113,7 @@ const selectedTools: SelectedTool[] = [
   }
 ];
 
-const demoConfig: DemoConfig = {
+export const skylarVoiceConfig: DemoConfig = {
   title: "Skylar Voice Assistant",
   overview: "An intelligent voice assistant to answer questions about Skylar's advertising solutions.",
   callConfig: {
@@ -126,4 +126,4 @@ const demoConfig: DemoConfig = {
   }
 };
 
-export default demoConfig;
+export default skylarVoiceConfig;

@@ -56,17 +56,49 @@ export default function Home() {
   }, [callTranscript]);
 
   useEffect(() => {
-    const handleShowImage = (event: CustomEvent) => {
-      console.log("📸 Image display event received:", event.detail);
-      setDisplayedImage(event.detail);
-      console.log("📸 displayedImage state updated to:", event.detail);
+    const handleSkylarShowImage = (event: CustomEvent) => {
+      console.log("📸 skylar show image event received:", event.detail);
+
+      let imageName: string | null = null;
+      if (event.detail) {
+        if (typeof event.detail === 'string') {
+          imageName = event.detail;
+        } else if (typeof event.detail === 'object' && 'imageName' in event.detail) {
+          imageName = (event.detail as any).imageName;
+        } else if (typeof event.detail === 'object' && 'detail' in event.detail && typeof (event.detail as any).detail === 'string') {
+          // handle nested detail in some custom event shapes
+          imageName = (event.detail as any).detail;
+        }
+      }
+
+      if (imageName) {
+        setDisplayedImage(imageName);
+        console.log("📸 displayedImage state updated to:", imageName);
+      } else {
+        console.warn("📸 skylar:showImage event had no imageName:", event.detail);
+      }
     };
 
-    window.addEventListener('showImage', handleShowImage as EventListener);
-    console.log("📸 Image event listener registered");
+    const handleSkylarCallEnded = () => {
+      console.log('📸 skylar call ended — clearing displayed image');
+      setDisplayedImage(null);
+    };
+
+    // Register namespaced Skylar events and legacy fallbacks
+    window.addEventListener('skylar:showImage', handleSkylarShowImage as EventListener);
+    window.addEventListener('showImage', handleSkylarShowImage as EventListener); // legacy support
+
+    window.addEventListener('skylar:callEnded', handleSkylarCallEnded as EventListener);
+    window.addEventListener('callEnded', handleSkylarCallEnded as EventListener); // legacy support
+
+    console.log("📸 Skylar image & call-ended listeners registered");
 
     return () => {
-      window.removeEventListener('showImage', handleShowImage as EventListener);
+      window.removeEventListener('skylar:showImage', handleSkylarShowImage as EventListener);
+      window.removeEventListener('showImage', handleSkylarShowImage as EventListener);
+
+      window.removeEventListener('skylar:callEnded', handleSkylarCallEnded as EventListener);
+      window.removeEventListener('callEnded', handleSkylarCallEnded as EventListener);
     };
   }, []);
 
