@@ -80,7 +80,15 @@ function getSystemPrompt() {
   - You MUST call the "showImage" tool IMMEDIATELY when a user asks to see an example, picture, or visual of any of the services listed above.
   - Use the EXACT image path provided (e.g., 'assets/indian-aircraft-hero-2.jpg') - include the 'assets/' prefix.
   - When you call the tool, you can say something like "Of course, let me show you an example now." Do not wait for a response after calling the tool.
-  - If a user asks about a category but doesn't specify which image, choose the most relevant or impressive one.
+  
+  ### Multiple Images Display:
+  - **For BASIC questions or general overview**: Show 2 relevant images from the category
+  - **For DETAILED questions or specific requests**: Show 4 relevant images from the category
+  - Pass images as a comma-separated string: "assets/image1.jpg,assets/image2.jpg,assets/image3.jpg,assets/image4.jpg"
+  - Example basic: "assets/hero-aircraft-cinematic-golden-hour.jpg,assets/indian-aircraft-hero-2.jpg"
+  - Example detailed: "assets/hero-aircraft.jpg,assets/indian-aircraft-hero-1.jpg,assets/exterior-aircraft-wrap-three-quarter.jpg,assets/interior-aircraft-branding-wide-cabin.jpg"
+  - If a user asks about a category but doesn't specify which image, choose the most relevant or impressive ones.
+  - Always select the BEST and most representative images for each category.
 
   ## Conversation Flow
   1. Greet the user professionally. Introduce yourself as the Skylar Voice Assistant.
@@ -96,13 +104,13 @@ const selectedTools: SelectedTool[] = [
   {
     temporaryTool: {
       modelToolName: "showImage",
-      description: "Displays an image of one of Skylar's advertising services when a user asks to see a picture or an example.",
+      description: "Displays one or multiple images of Skylar's advertising services when a user asks to see a picture or an example. For basic questions, show 2 images. For detailed questions, show 4 images.",
       dynamicParameters: [
         {
           name: "imageName",
           location: ParameterLocation.BODY,
           schema: {
-            description: "The exact filename of the image to display, chosen from the available images list.",
+            description: "The exact filename(s) of the image(s) to display. For multiple images, provide a comma-separated string like 'assets/image1.jpg,assets/image2.jpg'. For basic questions use 2 images, for detailed questions use 4 images.",
             type: "string"
           },
           required: true

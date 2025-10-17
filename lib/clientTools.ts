@@ -22,13 +22,21 @@ export const showImageTool: ClientToolImplementation = (parameters) => {
   console.log("🖼️ Full parameters:", parameters);
 
   if (typeof window !== "undefined") {
+    // Handle comma-separated images for multiple display
+    let imageNames: string[] = [];
+    
+    if (typeof imageName === 'string') {
+      // Split by comma if multiple images provided
+      imageNames = imageName.split(',').map(img => img.trim()).filter(img => img.length > 0);
+    }
+    
     // Skylar-specific event uses a namespaced event and object detail
     const event = new CustomEvent("skylar:showImage", {
-      detail: { imageName },
+      detail: { imageNames },
     });
     window.dispatchEvent(event);
-    console.log("🖼️ skylar:showImage Custom event dispatched for:", imageName);
+    console.log("🖼️ skylar:showImage Custom event dispatched for:", imageNames);
   }
 
-  return `Displayed the image: ${imageName}`;
+  return `Displayed ${imageName.split(',').length} image(s): ${imageName}`;
 };

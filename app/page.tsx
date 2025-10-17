@@ -46,7 +46,7 @@ export default function Home() {
   const [callTranscript, setCallTranscript] = useState<Transcript[] | null>([]);
   const [callDebugMessages, setCallDebugMessages] = useState<UltravoxExperimentalMessageEvent[]>([]);
   const [customerProfileKey, setCustomerProfileKey] = useState<string | null>(null);
-  const [displayedImage, setDisplayedImage] = useState<string | null>(null);
+  const [displayedImages, setDisplayedImages] = useState<string[]>([]);
   const transcriptContainerRef = useRef<HTMLDivElement>(null);
   
   useEffect(() => {
@@ -59,29 +59,35 @@ export default function Home() {
     const handleSkylarShowImage = (event: CustomEvent) => {
       console.log("📸 skylar show image event received:", event.detail);
 
-      let imageName: string | null = null;
+      let imageNames: string[] = [];
+      
       if (event.detail) {
-        if (typeof event.detail === 'string') {
-          imageName = event.detail;
+        // Handle new format: { imageNames: ['path1', 'path2'] }
+        if (typeof event.detail === 'object' && 'imageNames' in event.detail && Array.isArray((event.detail as any).imageNames)) {
+          imageNames = (event.detail as any).imageNames;
+        }
+        // Handle legacy format: { imageName: 'path1,path2' } or 'path1,path2'
+        else if (typeof event.detail === 'string') {
+          imageNames = event.detail.split(',').map((img: string) => img.trim()).filter((img: string) => img.length > 0);
         } else if (typeof event.detail === 'object' && 'imageName' in event.detail) {
-          imageName = (event.detail as any).imageName;
-        } else if (typeof event.detail === 'object' && 'detail' in event.detail && typeof (event.detail as any).detail === 'string') {
-          // handle nested detail in some custom event shapes
-          imageName = (event.detail as any).detail;
+          const imgName = (event.detail as any).imageName;
+          if (typeof imgName === 'string') {
+            imageNames = imgName.split(',').map((img: string) => img.trim()).filter((img: string) => img.length > 0);
+          }
         }
       }
 
-      if (imageName) {
-        setDisplayedImage(imageName);
-        console.log("📸 displayedImage state updated to:", imageName);
+      if (imageNames.length > 0) {
+        setDisplayedImages(imageNames);
+        console.log("📸 displayedImages state updated to:", imageNames);
       } else {
-        console.warn("📸 skylar:showImage event had no imageName:", event.detail);
+        console.warn("📸 skylar:showImage event had no valid images:", event.detail);
       }
     };
 
     const handleSkylarCallEnded = () => {
-      console.log('📸 skylar call ended — clearing displayed image');
-      setDisplayedImage(null);
+      console.log('📸 skylar call ended — clearing displayed images');
+      setDisplayedImages([]);
     };
 
     // Register namespaced Skylar events and legacy fallbacks
@@ -132,7 +138,7 @@ export default function Home() {
       handleStatusChange('Starting call...');
       setCallTranscript(null);
       setCallDebugMessages([]);
-      setDisplayedImage(null); // Clear displayed image
+      setDisplayedImages([]); // Clear displayed images
       clearCustomerProfile();
 
       // Generate a new key for the customer profile
@@ -211,13 +217,28 @@ export default function Home() {
                     )}
                     {isCallActive ? (
                       <div className="w-full">
-                        {displayedImage && (
-                          <div className="mb-4 flex justify-center">
-                            <img
-                              src={`/${displayedImage}`}
-                              alt="Menu item"
-                              className="max-w-md h-auto rounded-lg border-2 border-gray-700 shadow-lg"
-                            />
+                        {displayedImages.length > 0 && (
+                          <div className="mb-4">
+                            <div className={`grid gap-3 ${
+                              displayedImages.length === 1 ? 'grid-cols-1' :
+                              displayedImages.length === 2 ? 'grid-cols-2' :
+                              displayedImages.length === 3 ? 'grid-cols-3' :
+                              'grid-cols-2'
+                            }`}>
+                              {displayedImages.map((image, index) => (
+                                <div key={index} className="relative overflow-hidden rounded-lg border-2 border-gray-700 shadow-lg">
+                                  <img
+                                    src={`/${image}`}
+                                    alt={`Skylar service ${index + 1}`}
+                                    className="w-full h-auto object-cover"
+                                    onError={(e) => {
+                                      console.error(`Failed to load image: ${image}`);
+                                      (e.target as HTMLImageElement).style.display = 'none';
+                                    }}
+                                  />
+                                </div>
+                              ))}
+                            </div>
                           </div>
                         )}
                         <div className="mb-5 relative">
