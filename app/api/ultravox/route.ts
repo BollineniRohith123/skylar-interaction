@@ -1,6 +1,15 @@
 import { NextResponse, NextRequest } from 'next/server';
 import { CallConfig } from '@/lib/types';
 
+function sanitizeServerError(message: unknown) {
+  try {
+    const str = typeof message === 'string' ? message : JSON.stringify(message);
+    return str.replace(/ultravox/gi, 'skylar');
+  } catch (e) {
+    return 'Error contacting Skylar API';
+  }
+}
+
 export async function POST(request: NextRequest) {
   try {
     const body: CallConfig = await request.json();
@@ -25,7 +34,9 @@ export async function POST(request: NextRequest) {
 
     if (!response.ok) {
       const errorText = await response.text();
-      throw new Error(`Ultravox API error: ${response.status}, ${errorText}`);
+      // Throw a sanitized error so client does not see provider keywords
+      const sanitized = sanitizeServerError(errorText);
+      throw new Error(`Skylar API error: ${response.status}, ${sanitized}`);
     }
 
     const data = await response.json();
@@ -33,12 +44,12 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     if (error instanceof Error) {
       return NextResponse.json(
-        { error: 'Error calling Ultravox API', details: error.message },
+        { error: 'Error calling Skylar API', details: sanitizeServerError(error.message) },
         { status: 500 }
       );
     } else {
       return NextResponse.json(
-        { error: 'An unknown error occurred.' },
+        { error: 'An unknown error occurred while contacting the Skylar API.' },
         { status: 500 }
       );
     }

@@ -1,5 +1,14 @@
 import { NextResponse, NextRequest } from 'next/server';
 
+function sanitize(message: unknown) {
+  try {
+    const str = typeof message === 'string' ? message : JSON.stringify(message);
+    return str.replace(/ultravox/gi, 'skylar');
+  } catch (e) {
+    return 'Error contacting Skylar API';
+  }
+}
+
 export async function POST(request: NextRequest) {
   try {
     const { apiKey } = await request.json();
@@ -21,7 +30,7 @@ export async function POST(request: NextRequest) {
     if (!response.ok) {
       const errorText = await response.text();
       return NextResponse.json(
-        { error: 'Invalid API key or API error', details: errorText },
+        { error: 'Invalid API key or API error', details: sanitize(errorText) },
         { status: response.status }
       );
     }
@@ -43,12 +52,12 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     if (error instanceof Error) {
       return NextResponse.json(
-        { error: 'Error checking usage', details: error.message },
+        { error: 'Error checking usage', details: sanitize(error.message) },
         { status: 500 }
       );
     } else {
       return NextResponse.json(
-        { error: 'An unknown error occurred.' },
+        { error: 'An unknown error occurred while contacting the Skylar API.' },
         { status: 500 }
       );
     }

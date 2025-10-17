@@ -12,6 +12,21 @@ interface CallCallbacks {
   onDebugMessage?: (message: UltravoxExperimentalMessageEvent ) => void;
 }
 
+// Utility to redact any mention of the vendor name from logs/errors
+function redactUltravox(input: any) {
+  try {
+    if (input === undefined || input === null) return input;
+    if (input instanceof Error) {
+      const msg = input.message || String(input);
+      return new Error(msg.replace(/ultravox/gi, 'skylar'));
+    }
+    const str = typeof input === 'string' ? input : JSON.stringify(input);
+    return str.replace(/ultravox/gi, 'skylar');
+  } catch (e) {
+    return '[redacted]';
+  }
+}
+
 export function toggleMute(role: Role): void {
 
   if (uvSession) {
@@ -32,7 +47,8 @@ async function createCall(callConfig: CallConfig, showDebugMessages?: boolean): 
 
   try {
     if(showDebugMessages) {
-      console.log(`Using model ${callConfig.model}`);
+      // Avoid leaking provider/model names in console
+      console.log(`Using model ${redactUltravox(callConfig.model)}`);
     }
 
     const response = await fetch(`/api/ultravox`, {
@@ -45,17 +61,23 @@ async function createCall(callConfig: CallConfig, showDebugMessages?: boolean): 
 
     if (!response.ok) {
       const errorText = await response.text();
-      throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
+      const sanitized = redactUltravox(errorText);
+      // Throw sanitized error to avoid exposing provider keywords in the client
+      throw new Error(`HTTP error! status: ${response.status}, message: ${sanitized}`);
     }
     const data: JoinUrlResponse = await response.json();
 
     if(showDebugMessages) {
-      console.log(`Call created. Join URL: ${data.joinUrl}`);
+      // Redact host portion of join URL so vendor hostname does not appear
+      const redactedJoin = data.joinUrl ? String(data.joinUrl).replace(/:\/\/[^/]+/, '://[redacted]') : '[redacted]';
+      console.log(`Call created. Join URL: ${redactedJoin}`);
     }
     
     return data;
   } catch (error) {
-    console.error('Error creating call:', error);
+    // Log sanitized error to console
+    const safeErr = error instanceof Error ? redactUltravox(error) : redactUltravox(String(error));
+    console.error('Error creating call:', safeErr);
     throw error;
   }
 }
@@ -68,7 +90,9 @@ export async function startCall(callbacks: CallCallbacks, callConfig: CallConfig
     console.error('Join URL is required');
     return;
   } else {
-    console.log('Joining call:', joinUrl);
+    // Don't print raw join URL (it may include vendor hostnames). Print a redacted URL instead.
+    const redactedJoinUrl = joinUrl ? String(joinUrl).replace(/:\/\/[^/]+/, '://[redacted]') : '[redacted]';
+    console.log('Joining call:', redactedJoinUrl);
 
     // Start up our Ultravox Session
     uvSession = new UltravoxSession({ experimentalMessages: debugMessages });
@@ -86,7 +110,8 @@ export async function startCall(callbacks: CallCallbacks, callConfig: CallConfig
     );
 
     if(showDebugMessages) {
-      console.log('uvSession created:', uvSession);
+      // Avoid printing the full uvSession object which can contain SDK names
+      console.log('uvSession created');
       console.log('uvSession methods:', Object.getOwnPropertyNames(Object.getPrototypeOf(uvSession)));
     }
 
@@ -100,6 +125,14 @@ export async function startCall(callbacks: CallCallbacks, callConfig: CallConfig
       });
   
       uvSession.addEventListener('experimental_message', (msg: any) => {
+        // Sanitize any incoming debug message bodies before forwarding to the UI debug handler
+        try {
+          if (msg && msg.message && msg.message.message) {
+            msg.message.message = redactUltravox(msg.message.message);
+          }
+        } catch (e) {
+          // ignore
+        }
         callbacks?.onDebugMessage?.(msg);
       });
 

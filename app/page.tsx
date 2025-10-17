@@ -59,6 +59,57 @@ export default function Home() {
   const [apiKeyError, setApiKeyError] = useState<string | null>(null);
   const transcriptContainerRef = useRef<HTMLDivElement>(null);
   
+  // Sanitize console output on the client to avoid leaking provider/vendor names (e.g. 'ultravox').
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const originalLog = console.log.bind(console);
+    const originalWarn = console.warn.bind(console);
+    const originalError = console.error.bind(console);
+    const originalInfo = console.info.bind(console);
+
+    const sanitize = (arg: any) => {
+      try {
+        if (typeof arg === 'string') return arg.replace(/ultravox/gi, 'skylar');
+        if (arg instanceof Error) {
+          const err = new Error((arg.message || '').replace(/ultravox/gi, 'skylar'));
+          // copy stack if present but sanitize it
+          if (arg.stack) err.stack = arg.stack.replace(/ultravox/gi, 'skylar');
+          return err;
+        }
+        // Try to stringify and sanitize for objects (best-effort). If stringify fails, return the original.
+        try {
+          const s = JSON.stringify(arg);
+          if (typeof s === 'string') {
+            const replaced = s.replace(/ultravox/gi, 'skylar');
+            try {
+              return JSON.parse(replaced);
+            } catch (_) {
+              return replaced;
+            }
+          }
+        } catch (_) {
+          // ignore
+        }
+        return arg;
+      } catch (e) {
+        return arg;
+      }
+    };
+
+    console.log = (...args: any[]) => originalLog(...args.map(sanitize));
+    console.warn = (...args: any[]) => originalWarn(...args.map(sanitize));
+    console.error = (...args: any[]) => originalError(...args.map(sanitize));
+    console.info = (...args: any[]) => originalInfo(...args.map(sanitize));
+
+    return () => {
+      console.log = originalLog;
+      console.warn = originalWarn;
+      console.error = originalError;
+      console.info = originalInfo;
+    };
+  }, []);
+
   useEffect(() => {
     if (transcriptContainerRef.current) {
       transcriptContainerRef.current.scrollTop = transcriptContainerRef.current.scrollHeight;
