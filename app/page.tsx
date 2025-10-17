@@ -258,14 +258,14 @@ export default function Home() {
               <div className="flex flex-col space-y-4">
                 <div>
                   <label htmlFor="apiKey" className="block text-sm font-medium text-gray-300 mb-2">
-                    Ultravox API Key
+                    API Key
                   </label>
                   <input
                     type="password"
                     id="apiKey"
                     value={apiKey}
                     onChange={(e) => handleApiKeyChange(e.target.value)}
-                    placeholder="Enter your Ultravox API key (e.g., AbCdEf.1234567890abcdef...)"
+                    placeholder="Enter your API key (e.g., AbCdEf.1234567890abcdef...)"
                     className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 </div>
@@ -357,13 +357,13 @@ export default function Home() {
                               <div key={index}>
                                 {showUserTranscripts ? (
                                   <>
-                                    <p><span className="text-gray-600">{transcript.speaker === 'agent' ? "Ultravox" : "User"}</span></p>
+                                    <p><span className="text-gray-600">{transcript.speaker === 'agent' ? "Skylar" : "User"}</span></p>
                                     <p className="mb-4"><span>{transcript.text}</span></p>
                                   </>
                                 ) : (
                                   transcript.speaker === 'agent' && (
                                     <>
-                                      <p><span className="text-gray-600">{transcript.speaker === 'agent' ? "Ultravox" : "User"}</span></p>
+                                      <p><span className="text-gray-600">{transcript.speaker === 'agent' ? "Skylar" : "User"}</span></p>
                                       <p className="mb-4"><span>{transcript.text}</span></p>
                                     </>
                                   )
