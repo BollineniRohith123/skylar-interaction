@@ -9,9 +9,18 @@ export async function POST(request: NextRequest) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'X-API-Key': `${process.env.ULTRAVOX_API_KEY}`,
+        'X-API-Key': body.apiKey || `${process.env.ULTRAVOX_API_KEY}`,
       },
-      body: JSON.stringify({ ...body }),
+      body: JSON.stringify({
+        systemPrompt: body.systemPrompt,
+        model: body.model,
+        languageHint: body.languageHint,
+        selectedTools: body.selectedTools,
+        voice: body.voice,
+        temperature: body.temperature,
+        maxDuration: body.maxDuration,
+        timeExceededMessage: body.timeExceededMessage,
+      }),
     });
 
     if (!response.ok) {

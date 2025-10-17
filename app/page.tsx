@@ -6,13 +6,12 @@ import { startCall, endCall } from '@/lib/callFunctions'
 import { CallConfig, SelectedTool } from '@/lib/types'
 import demoConfig from './demo-config';
 import { Role, Transcript, UltravoxExperimentalMessageEvent, UltravoxSessionStatus } from 'ultravox-client';
-import BorderedImage from '@/app/components/BorderedImage';
-import UVLogo from '@/public/UVMark-White.svg';
 import CallStatus from './components/CallStatus';
 import DebugMessages from '@/app/components/DebugMessages';
 import MicToggleButton from './components/MicToggleButton';
 import { PhoneOffIcon } from 'lucide-react';
 import OrderDetails from './components/OrderDetails';
+import DetailedCampaignView from './components/DetailedCampaignView';
 
 type SearchParamsProps = {
   showMuteSpeakerButton: boolean;
@@ -47,6 +46,17 @@ export default function Home() {
   const [callDebugMessages, setCallDebugMessages] = useState<UltravoxExperimentalMessageEvent[]>([]);
   const [customerProfileKey, setCustomerProfileKey] = useState<string | null>(null);
   const [displayedImages, setDisplayedImages] = useState<string[]>([]);
+  const [apiKey, setApiKey] = useState('');
+  const [usageInfo, setUsageInfo] = useState<{
+    freeTimeRemaining: number;
+    freeTimeUsed: number;
+    hasActiveSubscription: boolean;
+    subscriptionTier: string | null;
+    allowedConcurrentCalls: number;
+    allowedVoices: number;
+  } | null>(null);
+  const [isCheckingUsage, setIsCheckingUsage] = useState(false);
+  const [apiKeyError, setApiKeyError] = useState<string | null>(null);
   const transcriptContainerRef = useRef<HTMLDivElement>(null);
   
   useEffect(() => {
@@ -132,6 +142,50 @@ export default function Home() {
     setCustomerProfileKey(prev => prev ? `${prev}-cleared` : 'cleared');
   }, []);
 
+  const checkUsage = useCallback(async (key: string) => {
+    if (!key.trim()) {
+      setUsageInfo(null);
+      setApiKeyError(null);
+      return;
+    }
+
+    setIsCheckingUsage(true);
+    setApiKeyError(null);
+    try {
+      const response = await fetch('/api/usage', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ apiKey: key }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to check usage');
+      }
+
+      const data = await response.json();
+      setUsageInfo(data);
+    } catch (error) {
+      console.error('Error checking usage:', error);
+      setUsageInfo(null);
+      setApiKeyError(error instanceof Error ? error.message : 'Invalid API key');
+    } finally {
+      setIsCheckingUsage(false);
+    }
+  }, []);
+
+  const handleApiKeyChange = useCallback((value: string) => {
+    setApiKey(value);
+    setApiKeyError(null);
+    // Debounce the usage check
+    const timeoutId = setTimeout(() => {
+      checkUsage(value);
+    }, 500);
+    return () => clearTimeout(timeoutId);
+  }, [checkUsage]);
+
   const handleStartCallButtonClick = async (modelOverride?: string, showDebugMessages?: boolean) => {
     console.log('Start call button clicked');
     try {
@@ -150,10 +204,10 @@ export default function Home() {
         systemPrompt: demoConfig.callConfig.systemPrompt,
         model: modelOverride || demoConfig.callConfig.model,
         languageHint: demoConfig.callConfig.languageHint,
+        selectedTools: demoConfig.callConfig.selectedTools,
         voice: demoConfig.callConfig.voice,
         temperature: demoConfig.callConfig.temperature,
-        maxDuration: demoConfig.callConfig.maxDuration,
-        timeExceededMessage: demoConfig.callConfig.timeExceededMessage
+        apiKey: apiKey || undefined, // Use user-provided API key
       };
 
       const paramOverride: { [key: string]: any } = {
@@ -199,6 +253,62 @@ export default function Home() {
       <SearchParamsHandler>
         {({ showMuteSpeakerButton, modelOverride, showDebugMessages, showUserTranscripts }: SearchParamsProps) => (
           <div className="flex flex-col items-center justify-center">
+            {/* API Key Input and Usage Display */}
+            <div className="max-w-[1206px] mx-auto w-full mb-4 p-4 border border-[#2A2A2A] rounded-[3px] bg-gray-900">
+              <div className="flex flex-col space-y-4">
+                <div>
+                  <label htmlFor="apiKey" className="block text-sm font-medium text-gray-300 mb-2">
+                    Ultravox API Key
+                  </label>
+                  <input
+                    type="password"
+                    id="apiKey"
+                    value={apiKey}
+                    onChange={(e) => handleApiKeyChange(e.target.value)}
+                    placeholder="Enter your Ultravox API key (e.g., AbCdEf.1234567890abcdef...)"
+                    className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+                
+                {isCheckingUsage && (
+                  <div className="text-sm text-gray-400">Checking usage...</div>
+                )}
+                
+                {apiKeyError && (
+                  <div className="text-sm text-red-400 bg-red-900/20 p-2 rounded-md border border-red-800">
+                    {apiKeyError}
+                  </div>
+                )}
+                
+                {usageInfo && (
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                    <div className="bg-gray-800 p-3 rounded-md">
+                      <div className="text-gray-300">Remaining Minutes</div>
+                      <div className="text-2xl font-bold text-green-400">{usageInfo.freeTimeRemaining}</div>
+                    </div>
+                    <div className="bg-gray-800 p-3 rounded-md">
+                      <div className="text-gray-300">Used Minutes</div>
+                      <div className="text-2xl font-bold text-blue-400">{usageInfo.freeTimeUsed}</div>
+                    </div>
+                    <div className="bg-gray-800 p-3 rounded-md">
+                      <div className="text-gray-300">Subscription</div>
+                      <div className="text-lg font-bold text-purple-400">
+                        {usageInfo.hasActiveSubscription ? 
+                          (usageInfo.subscriptionTier || 'Active') : 
+                          'Free Tier'
+                        }
+                      </div>
+                    </div>
+                  </div>
+                )}
+                
+                {usageInfo && (
+                  <div className="text-xs text-gray-500">
+                    Concurrent Calls: {usageInfo.allowedConcurrentCalls} | Voices: {usageInfo.allowedVoices}
+                  </div>
+                )}
+              </div>
+            </div>
             {/* Main Area */}
             <div className="max-w-[1206px] mx-auto w-full py-5 pl-5 pr-[10px] border border-[#2A2A2A] rounded-[3px]">
               <div className="flex flex-col justify-center lg:flex-row ">
@@ -207,12 +317,9 @@ export default function Home() {
                   <h1 className="text-2xl font-bold w-full">{demoConfig.title}</h1>
                   <div className="flex flex-col justify-between items-start h-full font-mono p-4 ">
                     {!isCallActive && (
-                      <div className="mt-20 self-center">
-                        <BorderedImage
-                          src={UVLogo}
-                          alt="todo"
-                          size="md"
-                        />
+                      <div className="mt-20 self-center text-center">
+                        <h2 className="text-xl font-semibold mb-4">Skylar - The House of Advertising</h2>
+                        <p className="text-gray-300">Ready to showcase our comprehensive advertising solutions</p>
                       </div>
                     )}
                     {isCallActive ? (
@@ -287,10 +394,11 @@ export default function Home() {
                         </div>
                         <button
                           type="button"
-                          className="hover:bg-gray-700 px-6 py-2 border-2 w-full mb-4"
+                          className="hover:bg-gray-700 px-6 py-2 border-2 w-full mb-4 disabled:opacity-50 disabled:cursor-not-allowed"
                           onClick={() => handleStartCallButtonClick(modelOverride, showDebugMessages)}
+                          disabled={!apiKey.trim() || !usageInfo}
                         >
-                          Start Call
+                          {usageInfo ? 'Start Call' : 'Enter API Key to Start Call'}
                         </button>
                       </div>
                     )}
@@ -302,6 +410,10 @@ export default function Home() {
                 </CallStatus>
               </div>
             </div>
+            
+            {/* Detailed Campaign Builder - Full Width Below Main Area */}
+            <DetailedCampaignView />
+            
             {/* Debug View */}
             <DebugMessages debugMessages={callDebugMessages} />
           </div>

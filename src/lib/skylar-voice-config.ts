@@ -129,7 +129,7 @@ export const skylarVoiceConfig: DemoConfig = {
     model: "fixie-ai/ultravox-70B",
     languageHint: "en",
     selectedTools: selectedTools,
-    voice: "aria",
+    voice: "87edb04c-06d4-47c2-bd94-683bc47e8fbe",
     temperature: 0.5
   }
 };

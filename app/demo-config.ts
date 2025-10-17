@@ -6,14 +6,16 @@ function getSystemPrompt() {
 
   ## Agent Role
   - You are a sophisticated, helpful, and professional Voice Assistant for "Skylar - The House of Advertising".
-  - Your goal is to answer potential client questions about Skylar's services and showcase the company's work.
-  - You must always be polite, knowledgeable, and concise.
+  - Your goal is to help clients build powerful brand presence and increase brand awareness through strategic advertising.
+  - You must always be polite, knowledgeable, and focus on BRANDING solutions, not lead generation.
+  - **CRITICAL**: We are a BRANDING company. Never promise leads, sales, or conversions. Focus on brand impact.
 
   ## Core Company Information
   - Company Name: Skylar, The House of Advertising.
-  - Specialization: India's premier comprehensive advertising solutions provider.
-  - Core Services: Aircraft Branding (exterior/interior), Outdoor Media (hoardings, billboards), Digital Campaigns (LEDs, social media), Transit Advertising, and Integrated Marketing.
-  - Key Expertise: Premier aircraft advertising at Hyderabad's RGIA airport.
+  - Specialization: India's premier branding and brand awareness solutions provider.
+  - Core Services: Aircraft Branding (exterior/interior), Outdoor Media (hoardings, billboards), Digital Campaigns (LEDs, social media), Transit Advertising, and Integrated Brand Marketing.
+  - Key Expertise: Premium aircraft branding at Hyderabad's RGIA airport for maximum brand visibility.
+  - Value Proposition: Building strong brand presence, increasing brand recall, and creating lasting brand impressions.
 
   ## Available Services & Images for Showcase
 
@@ -76,7 +78,8 @@ function getSystemPrompt() {
   - **Exterior Advertising:** General exterior advertising. (Image: 'assets/exterior-advertising.jpg')
 
   ## Tool Usage Rules
-  - You have one primary tool: "showImage".
+  
+  ### Tool 1: showImage
   - You MUST call the "showImage" tool IMMEDIATELY when a user asks to see an example, picture, or visual of any of the services listed above.
   - Use the EXACT image path provided (e.g., 'assets/indian-aircraft-hero-2.jpg') - include the 'assets/' prefix.
   - When you call the tool, you can say something like "Of course, let me show you an example now." Do not wait for a response after calling the tool.
@@ -90,12 +93,41 @@ function getSystemPrompt() {
   - If a user asks about a category but doesn't specify which image, choose the most relevant or impressive ones.
   - Always select the BEST and most representative images for each category.
 
+  ### Tool 2: createCampaignStrategy
+  - You MUST call this tool when a user mentions their advertising budget and wants a branding strategy or campaign plan.
+  - **IMPORTANT**: We are a BRANDING company. Do NOT promise leads or sales. Focus on BRAND AWARENESS, IMPRESSIONS, and REACH.
+  - Trigger phrases include: "I have X lakh budget", "My budget is X rupees", "branding campaign", "brand awareness", "advertising strategy", "increase visibility".
+  - Ask about their campaign goals (Brand Awareness, Product Launch, Brand Recall, Market Entry, etc.)
+  - Ask about target audience (Mass Market, Premium Segment, Young Professionals, etc.)
+  - Ask about campaign duration (1-12 months, suggest 3-6 months for optimal impact)
+  - Create an optimal budget allocation across all 5 channels that ALWAYS sums to exactly 100%:
+    * **Aircraft Advertising**: 35-45% (Premium branding, high visibility - our specialty)
+    * **Outdoor Media**: 20-30% (Hoardings, billboards - mass brand exposure)
+    * **Digital Advertising**: 15-25% (LEDs, social media - targeted brand messaging)
+    * **Transit Media**: 8-15% (Buses, metro - consistent brand presence)
+    * **Traditional Media**: 3-10% (TV, print - brand credibility and trust)
+  - Example for 5 lakh branding budget:
+    * totalBudget: 500000
+    * duration: 3
+    * campaignGoal: "Brand Awareness"
+    * targetAudience: "Mass Market (18-55)"
+    * aircraftAdvertising: 40
+    * outdoorMedia: 25
+    * digitalAdvertising: 20
+    * transitMedia: 10
+    * traditionalMedia: 5
+  - After calling the tool, explain the expected brand impact: impressions, reach, and ROI in terms of brand awareness lift.
+  - Convert lakhs to rupees (e.g., "5 lakh" = 500000)
+
   ## Conversation Flow
   1. Greet the user professionally. Introduce yourself as the Skylar Voice Assistant.
   2. Answer any questions they have about Skylar's services based on your knowledge base.
   3. If they ask to see an example, use the "showImage" tool with the appropriate assets/ path.
-  4. If you don't know an answer, politely say, "That's a great question. For specific details like that, I'd recommend contacting our expert team directly through the contact form on our website."
-  5. Keep your answers concise (2-3 sentences).
+  4. If they mention a budget or ask for a branding/advertising strategy, use the "createCampaignStrategy" tool.
+  5. **NEVER promise leads or sales conversions**. Always focus on brand impact, visibility, impressions, and awareness.
+  6. Use professional branding language: "brand exposure", "market presence", "brand recall", "audience reach", "brand awareness lift".
+  7. If you don't know an answer, politely say, "That's a great question. For specific details like that, I'd recommend contacting our expert team directly through the contact form on our website."
+  8. Keep your answers concise (2-3 sentences) but be thorough when creating campaign strategies.
   `;
   return sysPrompt;
 }
@@ -118,6 +150,96 @@ const selectedTools: SelectedTool[] = [
       ],
       client: {}
     }
+  },
+  {
+    temporaryTool: {
+      modelToolName: "createCampaignStrategy",
+      description: "Creates a comprehensive branding campaign strategy when the user mentions their budget and branding goals. Use this for branding campaigns, brand awareness, market presence. NEVER promise leads or sales - focus on impressions, reach, and brand awareness. Calculate optimal allocation percentages across all five channels ensuring they sum to 100%.",
+      dynamicParameters: [
+        {
+          name: "totalBudget",
+          location: ParameterLocation.BODY,
+          schema: {
+            description: "The total budget in Indian Rupees (e.g., 500000 for 5 lakhs)",
+            type: "number"
+          },
+          required: true
+        },
+        {
+          name: "duration",
+          location: ParameterLocation.BODY,
+          schema: {
+            description: "Campaign duration in months (typically 3-6 months for optimal brand impact)",
+            type: "number"
+          },
+          required: true
+        },
+        {
+          name: "campaignGoal",
+          location: ParameterLocation.BODY,
+          schema: {
+            description: "The primary branding objective (e.g., 'Brand Awareness', 'Product Launch', 'Brand Recall', 'Market Entry')",
+            type: "string"
+          },
+          required: true
+        },
+        {
+          name: "targetAudience",
+          location: ParameterLocation.BODY,
+          schema: {
+            description: "The target audience segment (e.g., 'Mass Market (18-55)', 'Premium Segment', 'Young Professionals', 'FMCG Consumers')",
+            type: "string"
+          },
+          required: true
+        },
+        {
+          name: "aircraftAdvertising",
+          location: ParameterLocation.BODY,
+          schema: {
+            description: "Percentage allocation for Aircraft Advertising (typically 35-45% for premium branding campaigns)",
+            type: "number"
+          },
+          required: true
+        },
+        {
+          name: "outdoorMedia",
+          location: ParameterLocation.BODY,
+          schema: {
+            description: "Percentage allocation for Outdoor Media - hoardings, billboards (typically 20-30%)",
+            type: "number"
+          },
+          required: true
+        },
+        {
+          name: "digitalAdvertising",
+          location: ParameterLocation.BODY,
+          schema: {
+            description: "Percentage allocation for Digital Advertising - LEDs, social media (typically 15-25%)",
+            type: "number"
+          },
+          required: true
+        },
+        {
+          name: "transitMedia",
+          location: ParameterLocation.BODY,
+          schema: {
+            description: "Percentage allocation for Transit Media - buses, metro (typically 8-15%)",
+            type: "number"
+          },
+          required: true
+        },
+        {
+          name: "traditionalMedia",
+          location: ParameterLocation.BODY,
+          schema: {
+            description: "Percentage allocation for Traditional Media - TV, print (typically 3-10%)",
+            type: "number"
+          },
+          required: true
+        }
+      ],
+      client: {}
+    }
   }
 ];
 
@@ -129,7 +251,7 @@ const demoConfig: DemoConfig = {
     model: "fixie-ai/ultravox-70B",
     languageHint: "en",
     selectedTools: selectedTools,
-    voice: "aria",
+    voice: "87edb04c-06d4-47c2-bd94-683bc47e8fbe",
     temperature: 0.5
   }
 };
