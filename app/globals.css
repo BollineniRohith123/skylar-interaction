@@ -124,4 +124,120 @@
     background-color: #f1f1f1;
     border-radius: 20px;
   }
+
+  /* Skylar Gradient Text Utilities */
+  .text-gradient-sky {
+    background: linear-gradient(135deg, hsl(209 100% 40%) 0%, hsl(209 100% 60%) 50%, hsl(0 0% 100%) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .text-gradient-sunset {
+    background: linear-gradient(135deg, hsl(209 100% 30%) 0%, hsl(25 85% 55%) 50%, hsl(51 100% 50%) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .text-gradient-gold {
+    background: linear-gradient(135deg, hsl(45 100% 45%) 0%, hsl(51 100% 50%) 50%, hsl(45 100% 60%) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Hover effects for gradient buttons */
+  .btn-gradient-sunset {
+    background: linear-gradient(135deg, hsl(209 100% 30%) 0%, hsl(25 85% 55%) 50%, hsl(51 100% 50%) 100%);
+    transition: all 0.3s ease;
+  }
+
+  .btn-gradient-sunset:hover {
+    background: linear-gradient(135deg, hsl(209 100% 35%) 0%, hsl(25 85% 60%) 50%, hsl(51 100% 55%) 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  }
+
+  .btn-gradient-gold {
+    background: linear-gradient(135deg, hsl(45 100% 45%) 0%, hsl(51 100% 50%) 50%, hsl(45 100% 60%) 100%);
+    transition: all 0.3s ease;
+  }
+
+  .btn-gradient-gold:hover {
+    background: linear-gradient(135deg, hsl(45 100% 50%) 0%, hsl(51 100% 55%) 50%, hsl(45 100% 65%) 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+  }
+
+  /* Pulse animation for active elements */
+  @keyframes pulse-glow {
+    0%, 100% {
+      box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+    }
+    50% {
+      box-shadow: 0 0 30px rgba(59, 130, 246, 0.8);
+    }
+  }
+
+  .pulse-glow {
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
+
+  /* Shimmer effect for premium elements */
+  @keyframes shimmer {
+    0% {
+      background-position: -1000px 0;
+    }
+    100% {
+      background-position: 1000px 0;
+    }
+  }
+
+  .shimmer {
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.1) 50%,
+      transparent 100%
+    );
+    background-size: 1000px 100%;
+    animation: shimmer 3s infinite;
+  }
+
+  /* Smooth fade-in animation */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .fade-in {
+    animation: fadeIn 0.5s ease-out;
+  }
+
+  /* Gradient border animation */
+  @keyframes gradient-border {
+    0% {
+      border-color: hsl(209 100% 40%);
+    }
+    33% {
+      border-color: hsl(25 85% 55%);
+    }
+    66% {
+      border-color: hsl(51 100% 50%);
+    }
+    100% {
+      border-color: hsl(209 100% 40%);
+    }
+  }
+
+  .animated-border {
+    animation: gradient-border 3s ease-in-out infinite;
+  }
 }

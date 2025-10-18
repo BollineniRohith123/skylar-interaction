@@ -158,6 +158,9 @@ export default function Home() {
     window.addEventListener('skylar:callEnded', handleSkylarCallEnded as EventListener);
     window.addEventListener('callEnded', handleSkylarCallEnded as EventListener); // legacy support
 
+    window.addEventListener('skylar:endCall', handleSkylarEndCall as unknown as EventListener);
+    window.addEventListener('endCall', handleSkylarEndCall as unknown as EventListener); // legacy support
+
     console.log("📸 Skylar image & call-ended listeners registered");
 
     return () => {
@@ -166,6 +169,9 @@ export default function Home() {
 
       window.removeEventListener('skylar:callEnded', handleSkylarCallEnded as EventListener);
       window.removeEventListener('callEnded', handleSkylarCallEnded as EventListener);
+
+      window.removeEventListener('skylar:endCall', handleSkylarEndCall as unknown as EventListener);
+      window.removeEventListener('endCall', handleSkylarEndCall as unknown as EventListener);
     };
   }, []);
 
@@ -299,16 +305,29 @@ export default function Home() {
     }
   };
 
+  const handleSkylarEndCall = async (event: CustomEvent) => {
+    console.log('📞 AI requested to end call with message:', event.detail?.message);
+    
+    // End the call
+    try {
+      handleStatusChange('Ending call...');
+      await endCall();
+      handleStatusChange('Call ended successfully');
+    } catch (error) {
+      handleStatusChange(`Error ending call: ${error instanceof Error ? error.message : String(error)}`);
+    }
+  };
+
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <SearchParamsHandler>
         {({ showMuteSpeakerButton, modelOverride, showDebugMessages, showUserTranscripts }: SearchParamsProps) => (
           <div className="flex flex-col items-center justify-center">
             {/* API Key Input and Usage Display */}
-            <div className="max-w-[1206px] mx-auto w-full mb-4 p-4 border border-[#2A2A2A] rounded-[3px] bg-gray-900">
+            <div className="max-w-[1206px] mx-auto w-full mb-4 p-6 border border-gray-700 rounded-lg bg-gradient-dark shadow-xl">
               <div className="flex flex-col space-y-4">
                 <div>
-                  <label htmlFor="apiKey" className="block text-sm font-medium text-gray-300 mb-2">
+                  <label htmlFor="apiKey" className="block text-sm font-medium text-gradient-sky mb-2">
                     Enter the Key of Skylar Bot
                   </label>
                   <input
@@ -317,7 +336,7 @@ export default function Home() {
                     value={apiKey}
                     onChange={(e) => handleApiKeyChange(e.target.value)}
                     placeholder="Enter the key for Skylar Bot (e.g., AbCdEf.1234567890abcdef...)"
-                    className="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-md text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 py-3 bg-gray-800 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all"
                   />
                 </div>
                 
@@ -333,13 +352,13 @@ export default function Home() {
                 
                 {usageInfo && (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                    <div className="bg-gray-800 p-3 rounded-md">
-                      <div className="text-gray-300">Remaining Minutes</div>
-                      <div className="text-2xl font-bold text-green-400">{usageInfo.freeTimeRemaining}</div>
+                    <div className="bg-gray-800 p-4 rounded-lg border border-gray-700 hover:border-green-500 transition-all">
+                      <div className="text-gray-300 text-xs uppercase tracking-wide mb-1">Remaining Minutes</div>
+                      <div className="text-3xl font-bold text-gradient-gold">{usageInfo.freeTimeRemaining}</div>
                     </div>
-                    <div className="bg-gray-800 p-3 rounded-md">
-                      <div className="text-gray-300">Used Minutes</div>
-                      <div className="text-2xl font-bold text-blue-400">{usageInfo.freeTimeUsed}</div>
+                    <div className="bg-gray-800 p-4 rounded-lg border border-gray-700 hover:border-blue-500 transition-all">
+                      <div className="text-gray-300 text-xs uppercase tracking-wide mb-1">Used Minutes</div>
+                      <div className="text-3xl font-bold text-blue-400">{usageInfo.freeTimeUsed}</div>
                     </div>
                   </div>
                 )}
@@ -352,30 +371,30 @@ export default function Home() {
               </div>
             </div>
             {/* Main Area */}
-            <div className="max-w-[1206px] mx-auto w-full py-5 pl-5 pr-[10px] border border-[#2A2A2A] rounded-[3px]">
+            <div className="max-w-[1206px] mx-auto w-full py-6 px-6 border border-gray-700 rounded-lg bg-gradient-dark shadow-xl">
               <div className="flex flex-col justify-center lg:flex-row ">
                 {/* Action Area */}
                 <div className="w-full lg:w-2/3">
-                  <h1 className="text-2xl font-bold w-full">{demoConfig.title}</h1>
+                  <h1 className="text-3xl font-bold w-full text-gradient-sky mb-2">{demoConfig.title}</h1>
                   <div className="flex flex-col justify-between items-start h-full font-mono p-4 ">
                     {!isCallActive && (
                       <div className="mt-20 self-center text-center">
-                        <h2 className="text-xl font-semibold mb-4">Skylar - The House of Advertising</h2>
-                        <p className="text-gray-300">Ready to showcase our comprehensive advertising solutions</p>
+                        <h2 className="text-2xl font-semibold mb-4 text-gradient-sunset">Skylar - The House of Advertising</h2>
+                        <p className="text-gray-300 text-lg">Ready to showcase our comprehensive advertising solutions</p>
                       </div>
                     )}
                     {isCallActive ? (
                       <div className="w-full">
                         {displayedImages.length > 0 && (
-                          <div className="mb-4">
-                            <div className={`grid gap-3 ${
+                          <div className="mb-6 fade-in">
+                            <div className={`grid gap-4 ${
                               displayedImages.length === 1 ? 'grid-cols-1' :
                               displayedImages.length === 2 ? 'grid-cols-2' :
                               displayedImages.length === 3 ? 'grid-cols-3' :
                               'grid-cols-2'
                             }`}>
                               {displayedImages.map((image, index) => (
-                                <div key={index} className="relative overflow-hidden rounded-lg border-2 border-gray-700 shadow-lg">
+                                <div key={index} className="relative overflow-hidden rounded-xl border-2 border-gray-600 shadow-2xl hover:border-blue-500 transition-all duration-300 hover:scale-105">
                                   <img
                                     src={`/${image}`}
                                     alt={`Skylar service ${index + 1}`}
@@ -385,42 +404,52 @@ export default function Home() {
                                       (e.target as HTMLImageElement).style.display = 'none';
                                     }}
                                   />
+                                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300"></div>
                                 </div>
                               ))}
                             </div>
                           </div>
                         )}
-                        <div className="mb-5 relative">
-                          <div 
+                        <div className="mb-6 relative bg-gray-900/50 rounded-xl border border-gray-700 overflow-hidden">
+                          <div
                             ref={transcriptContainerRef}
-                            className="h-[300px] p-2.5 overflow-y-auto relative"
+                            className="h-[300px] p-4 overflow-y-auto relative"
                           >
                             {callTranscript && callTranscript.map((transcript, index) => (
-                              <div key={index}>
+                              <div key={index} className="fade-in">
                                 {showUserTranscripts ? (
                                   <>
-                                    <p><span className="text-gray-600">{transcript.speaker === 'agent' ? "Skylar" : "User"}</span></p>
-                                    <p className="mb-4"><span>{transcript.text}</span></p>
+                                    <p className="mb-1">
+                                      <span className={`font-semibold ${transcript.speaker === 'agent' ? 'text-gradient-sky' : 'text-blue-400'}`}>
+                                        {transcript.speaker === 'agent' ? "Skylar" : "User"}
+                                      </span>
+                                    </p>
+                                    <p className="mb-4 text-gray-200 leading-relaxed"><span>{transcript.text}</span></p>
                                   </>
                                 ) : (
                                   transcript.speaker === 'agent' && (
                                     <>
-                                      <p><span className="text-gray-600">{transcript.speaker === 'agent' ? "Skylar" : "User"}</span></p>
-                                      <p className="mb-4"><span>{transcript.text}</span></p>
+                                      <p className="mb-1">
+                                        <span className="font-semibold text-gradient-sky">
+                                          {transcript.speaker === 'agent' ? "Skylar" : "User"}
+                                        </span>
+                                      </p>
+                                      <p className="mb-4 text-gray-200 leading-relaxed"><span>{transcript.text}</span></p>
                                     </>
                                   )
                                 )}
                               </div>
                             ))}
                           </div>
-                          <div className="absolute inset-x-0 top-0 h-20 bg-gradient-to-t from-transparent to-black pointer-events-none" />
+                          <div className="absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-gray-900 to-transparent pointer-events-none" />
+                          <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-gray-900 to-transparent pointer-events-none" />
                         </div>
                         <div className="flex justify-between space-x-4 p-4 w-full">
                           <MicToggleButton role={Role.USER}/>
                           { showMuteSpeakerButton && <MicToggleButton role={Role.AGENT}/> }
                           <button
                             type="button"
-                            className="flex-grow flex items-center justify-center h-10 bg-red-500"
+                            className="flex-grow flex items-center justify-center h-12 bg-red-600 hover:bg-red-700 rounded-lg font-semibold transition-all hover:shadow-lg"
                             onClick={handleEndCallButtonClick}
                             disabled={!isCallActive}
                           >
@@ -436,7 +465,7 @@ export default function Home() {
                         </div>
                         <button
                           type="button"
-                          className="hover:bg-gray-700 px-6 py-2 border-2 w-full mb-4 disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="btn-gradient-sunset px-8 py-4 rounded-lg w-full mb-4 disabled:opacity-50 disabled:cursor-not-allowed font-bold text-white text-lg shadow-lg"
                           onClick={() => handleStartCallButtonClick(modelOverride, showDebugMessages)}
                           disabled={!apiKey.trim() || !usageInfo}
                         >

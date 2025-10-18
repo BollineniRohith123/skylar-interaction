@@ -1,7 +1,7 @@
 'use client';
 import { UltravoxSession, UltravoxSessionStatus, Transcript, UltravoxExperimentalMessageEvent, Role } from 'ultravox-client';
 import { JoinUrlResponse, CallConfig } from '@/lib/types';
-import { updateOrderTool, showImageTool, createCampaignStrategyTool } from './clientTools';
+import { updateOrderTool, showImageTool, createCampaignStrategyTool, endCallTool } from './clientTools';
 
 let uvSession: UltravoxSession | null = null;
 const debugMessages: Set<string> = new Set(["debug"]);
@@ -107,6 +107,12 @@ export async function startCall(callbacks: CallCallbacks, callConfig: CallConfig
     uvSession.registerToolImplementation(
       "createCampaignStrategy",
       createCampaignStrategyTool
+    );
+
+    // Register our tool for ending calls (Skylar)
+    uvSession.registerToolImplementation(
+      "endCall",
+      endCallTool
     );
 
     if(showDebugMessages) {

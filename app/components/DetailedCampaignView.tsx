@@ -62,16 +62,18 @@ const DetailedCampaignView: React.FC = () => {
   return (
     <div className="max-w-[1206px] mx-auto w-full mt-6 mb-6">
       {/* Detailed Campaign Builder */}
-      <div className="bg-white border border-gray-200 rounded-lg shadow-lg overflow-hidden">
+      <div className="bg-white border border-gray-300 rounded-xl shadow-2xl overflow-hidden">
         {/* Header */}
-        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-4">
-          <div className="flex items-center gap-3">
-            <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-            </svg>
+        <div className="bg-gradient-sunset px-8 py-6">
+          <div className="flex items-center gap-4">
+            <div className="bg-white/20 rounded-lg p-3">
+              <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+            </div>
             <div>
-              <h2 className="text-2xl font-bold text-white">Comprehensive Campaign Strategy</h2>
-              <p className="text-blue-100">Professional branding campaign designed for maximum impact</p>
+              <h2 className="text-3xl font-bold text-white drop-shadow-lg">Comprehensive Campaign Strategy</h2>
+              <p className="text-white/90 text-lg">Professional branding campaign designed for maximum impact</p>
             </div>
           </div>
         </div>
@@ -80,9 +82,9 @@ const DetailedCampaignView: React.FC = () => {
           {/* Left Panel - Campaign Configuration */}
           <div className="space-y-6">
             {/* Campaign Overview */}
-            <div className="bg-gray-50 rounded-lg p-6">
-              <h3 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
-                <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
+            <div className="bg-gradient-to-br from-gray-50 to-blue-50 rounded-xl p-6 shadow-md border border-gray-200">
+              <h3 className="text-2xl font-bold text-gray-800 mb-5 flex items-center gap-3">
+                <div className="w-4 h-4 bg-gradient-sunset rounded-full shadow-lg"></div>
                 Campaign Overview
               </h3>
               
@@ -107,9 +109,9 @@ const DetailedCampaignView: React.FC = () => {
             </div>
 
             {/* Media Mix Breakdown */}
-            <div className="bg-gray-50 rounded-lg p-6">
-              <h3 className="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
-                <div className="w-3 h-3 bg-purple-500 rounded-full"></div>
+            <div className="bg-gradient-to-br from-gray-50 to-purple-50 rounded-xl p-6 shadow-md border border-gray-200">
+              <h3 className="text-2xl font-bold text-gray-800 mb-5 flex items-center gap-3">
+                <div className="w-4 h-4 bg-gradient-gold rounded-full shadow-lg"></div>
                 Media Mix Allocation
               </h3>
               
@@ -236,20 +238,20 @@ const DetailedCampaignView: React.FC = () => {
               </div>
 
               {/* Total Verification */}
-              <div className="mt-6 bg-green-50 border-2 border-green-200 rounded-lg p-4">
+              <div className="mt-6 bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-300 rounded-xl p-5 shadow-lg">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
-                      <svg className="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                  <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center shadow-md">
+                      <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                       </svg>
                     </div>
                     <div>
-                      <div className="font-bold text-green-800">Perfect 100% Allocation</div>
-                      <div className="text-sm text-green-700">Budget optimally distributed across all channels</div>
+                      <div className="font-bold text-green-900 text-lg">Perfect 100% Allocation</div>
+                      <div className="text-sm text-green-700 font-medium">Budget optimally distributed across all channels</div>
                     </div>
                   </div>
-                  <div className="text-2xl font-bold text-green-600">{formatINR(campaignStrategy.totalBudget)}</div>
+                  <div className="text-3xl font-bold text-gradient-gold">{formatINR(campaignStrategy.totalBudget)}</div>
                 </div>
               </div>
             </div>
@@ -258,11 +260,13 @@ const DetailedCampaignView: React.FC = () => {
           {/* Right Panel - Impact Metrics */}
           <div className="space-y-6">
             {/* Impact Dashboard */}
-            <div className="bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg p-6 text-white">
-              <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                </svg>
+            <div className="bg-gradient-sky rounded-xl p-8 text-white shadow-xl">
+              <h3 className="text-2xl font-bold mb-6 flex items-center gap-3">
+                <div className="bg-white/20 rounded-lg p-2">
+                  <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                  </svg>
+                </div>
                 Impact Analysis Dashboard
               </h3>
 
@@ -317,33 +321,40 @@ const DetailedCampaignView: React.FC = () => {
               </div>
 
               {/* ROI Highlight */}
-              <div className="bg-gradient-to-r from-yellow-400 to-orange-400 rounded-lg p-6 text-gray-900">
-                <div className="flex items-center justify-between mb-3">
-                  <div className="flex items-center gap-2">
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                    </svg>
-                    <span className="font-semibold">Expected Brand Awareness Lift</span>
+              <div className="bg-gradient-gold rounded-xl p-8 text-gray-900 shadow-xl border-2 border-yellow-300">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="bg-gray-900/10 rounded-lg p-2">
+                      <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                      </svg>
+                    </div>
+                    <span className="font-bold text-lg">Expected Brand Awareness Lift</span>
                   </div>
-                  <span className="bg-white/20 text-xs px-3 py-1 rounded-full font-semibold">Premium ROI</span>
+                  <span className="bg-gray-900/20 text-xs px-4 py-2 rounded-full font-bold uppercase tracking-wide">Premium ROI</span>
                 </div>
-                <div className="text-5xl font-bold mb-2">{campaignStrategy.impact.expectedROI}%</div>
-                <div className="text-sm font-medium">Projected increase in brand awareness and recall</div>
+                <div className="text-6xl font-black mb-3 drop-shadow-md">{campaignStrategy.impact.expectedROI}%</div>
+                <div className="text-base font-semibold">Projected increase in brand awareness and recall</div>
               </div>
             </div>
 
             {/* Campaign Timeline */}
-            <div className="bg-gray-50 rounded-lg p-6">
-              <h3 className="text-xl font-bold text-gray-800 mb-4">Campaign Timeline</h3>
+            <div className="bg-gradient-to-br from-gray-50 to-indigo-50 rounded-xl p-6 shadow-md border border-gray-200">
+              <h3 className="text-2xl font-bold text-gray-800 mb-5 flex items-center gap-3">
+                <svg className="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                Campaign Timeline
+              </h3>
               <div className="space-y-3">
                 {Array.from({length: campaignStrategy.duration}, (_, i) => (
-                  <div key={i} className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-bold">
+                  <div key={i} className="flex items-center gap-4 bg-white rounded-lg p-3 shadow-sm hover:shadow-md transition-shadow border border-gray-200">
+                    <div className="w-10 h-10 bg-gradient-sunset text-white rounded-full flex items-center justify-center text-sm font-bold shadow-md">
                       {i + 1}
                     </div>
                     <div className="flex-1">
-                      <div className="font-medium text-gray-900">Month {i + 1}</div>
-                      <div className="text-sm text-gray-600">Budget: {formatINR(campaignStrategy.totalBudget / campaignStrategy.duration)} | Expected Impressions: {((campaignStrategy.impact.totalImpressions / campaignStrategy.duration) / 100000).toFixed(1)}L</div>
+                      <div className="font-semibold text-gray-900 text-lg">Month {i + 1}</div>
+                      <div className="text-sm text-gray-600 font-medium">Budget: {formatINR(campaignStrategy.totalBudget / campaignStrategy.duration)} | Expected Impressions: {((campaignStrategy.impact.totalImpressions / campaignStrategy.duration) / 100000).toFixed(1)}L</div>
                     </div>
                   </div>
                 ))}
@@ -351,15 +362,15 @@ const DetailedCampaignView: React.FC = () => {
             </div>
 
             {/* Action Buttons */}
-            <div className="space-y-3">
-              <button className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold py-4 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 flex items-center justify-center gap-2">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="space-y-4">
+              <button className="w-full btn-gradient-sunset text-white font-bold py-5 rounded-xl shadow-lg flex items-center justify-center gap-3 text-lg">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-4-4m4 4l4-4" />
                 </svg>
                 Download Detailed Strategy Report
               </button>
-              <button className="w-full bg-gradient-to-r from-green-600 to-emerald-600 text-white font-bold py-4 rounded-lg hover:from-green-700 hover:to-emerald-700 transition-all duration-200 flex items-center justify-center gap-2">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <button className="w-full btn-gradient-gold text-gray-900 font-bold py-5 rounded-xl shadow-lg flex items-center justify-center gap-3 text-lg">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                 </svg>
                 Schedule Strategy Consultation

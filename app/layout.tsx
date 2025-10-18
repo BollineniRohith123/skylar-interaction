@@ -19,8 +19,10 @@ export default function RootLayout({
         {/* <!-- / Fathom --> */}
       </head>
       <body className="bg-black text-white">
-        <div className="flex mx-auto justify-between my-4 max-w-[1206px]">
-          <div className="text-2xl font-bold">Skylar Voice Assistant</div>
+        <div className="flex mx-auto justify-between my-4 max-w-[1206px] px-4">
+          <div className="text-3xl font-bold text-gradient-sky">
+            Skylar Voice Assistant
+          </div>
         </div>
         {children}
       </body>

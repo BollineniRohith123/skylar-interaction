@@ -94,3 +94,20 @@ export const createCampaignStrategyTool: ClientToolImplementation = (parameters)
 
   return `Campaign strategy created for ₹${(parseFloat(totalBudget) / 100000).toFixed(2)}L focused on ${campaignGoal} over ${duration} months. Expected ${Math.round((parseFloat(totalBudget) * 85) / 100000).toFixed(1)}L impressions with ${150 + (parseFloat(totalBudget) / 100000) * 50}% brand awareness lift.`;
 };
+
+// Client-implemented tool for ending calls (Skylar)
+export const endCallTool: ClientToolImplementation = (parameters) => {
+  const { message } = parameters as any;
+  console.log("📞 End Call Tool Called with message:", message);
+
+  if (typeof window !== "undefined") {
+    // Dispatch a custom event to trigger call ending
+    const event = new CustomEvent("skylar:endCall", {
+      detail: { message: message || "Thank you for using Skylar's services. We look forward to helping you build your brand presence." },
+    });
+    window.dispatchEvent(event);
+    console.log("📞 skylar:endCall Custom event dispatched");
+  }
+
+  return message || "Thank you for using Skylar's services. We look forward to helping you build your brand presence.";
+};
