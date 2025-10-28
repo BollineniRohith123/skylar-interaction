@@ -1,7 +1,15 @@
 'use client';
 import { UltravoxSession, UltravoxSessionStatus, Transcript, UltravoxExperimentalMessageEvent, Role } from 'ultravox-client';
 import { JoinUrlResponse, CallConfig } from '@/lib/types';
-import { updateOrderTool, showImageTool, createCampaignStrategyTool } from './clientTools';
+import {
+  updateOrderTool,
+  showImageTool,
+  createCampaignStrategyTool,
+  setCampaignGoalTool,
+  setCampaignTimelineTool,
+  buildAndExplainStrategyTool,
+  endCallTool
+} from './clientTools';
 
 let uvSession: UltravoxSession | null = null;
 const debugMessages: Set<string> = new Set(["debug"]);
@@ -103,10 +111,32 @@ export async function startCall(callbacks: CallCallbacks, callConfig: CallConfig
       showImageTool
     );
 
-    // Register our tool for creating campaign strategies (Skylar)
+    // Register NEW sequential campaign building tools (Skylar)
+    uvSession.registerToolImplementation(
+      "setCampaignGoal",
+      setCampaignGoalTool
+    );
+
+    uvSession.registerToolImplementation(
+      "setCampaignTimeline",
+      setCampaignTimelineTool
+    );
+
+    uvSession.registerToolImplementation(
+      "buildAndExplainStrategy",
+      buildAndExplainStrategyTool
+    );
+
+    // Register LEGACY tool for backward compatibility (deprecated)
     uvSession.registerToolImplementation(
       "createCampaignStrategy",
       createCampaignStrategyTool
+    );
+
+    // Register end call tool (Skylar)
+    uvSession.registerToolImplementation(
+      "endCall",
+      endCallTool
     );
 
     if(showDebugMessages) {
@@ -116,11 +146,11 @@ export async function startCall(callbacks: CallCallbacks, callConfig: CallConfig
     }
 
     if (uvSession) {
-      uvSession.addEventListener('status', (event: any) => {
+      uvSession.addEventListener('status', () => {
         callbacks.onStatusChange(uvSession?.status);
       });
-  
-      uvSession.addEventListener('transcript', (event: any) => {
+
+      uvSession.addEventListener('transcript', () => {
         callbacks.onTranscriptChange(uvSession?.transcripts);
       });
   

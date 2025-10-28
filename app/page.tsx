@@ -396,7 +396,7 @@ export default function Home() {
                             className="h-[300px] p-2.5 overflow-y-auto relative"
                           >
                             {callTranscript && callTranscript.map((transcript, index) => (
-                              <div key={index}>
+                              <div key={index} className="text-reveal">
                                 {showUserTranscripts ? (
                                   <>
                                     <p><span className="text-gray-600">{transcript.speaker === 'agent' ? "Skylar" : "User"}</span></p>
@@ -412,6 +412,18 @@ export default function Home() {
                                 )}
                               </div>
                             ))}
+
+                            {/* Typing Indicator - Show when agent is thinking */}
+                            {agentStatus === 'speaking' && (
+                              <div className="flex items-center gap-2 mb-4">
+                                <span className="text-gray-600">Skylar</span>
+                                <div className="flex items-center gap-1">
+                                  <span className="typing-dot"></span>
+                                  <span className="typing-dot"></span>
+                                  <span className="typing-dot"></span>
+                                </div>
+                              </div>
+                            )}
                           </div>
                           <div className="absolute inset-x-0 top-0 h-20 bg-gradient-to-t from-transparent to-black pointer-events-none" />
                         </div>
